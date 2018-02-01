@@ -11,7 +11,7 @@ import pickle
 
 class HupudataPipeline(object):
 
-    def open_spider(self):
+    def __init__(self):
         self.file = open('hupu.csv','w') 
 
     def process_item(self, item, spider):

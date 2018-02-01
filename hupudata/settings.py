@@ -66,7 +66,7 @@ ROBOTSTXT_OBEY = True
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'hupudata.pipelines.DuplicatesPipeline': 200,
-   # 'hupudata.pipelines.HupudataPipeline': 300
+   'hupudata.pipelines.HupudataPipeline': 300
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
