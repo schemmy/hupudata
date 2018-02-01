@@ -8,7 +8,7 @@ from hupudata.items import HupudataItem
 FILT = ['虎扑用户','的兴趣','更多']
 
 
-class QuotesSpider(scrapy.Spider):
+class HupudataSpider(scrapy.Spider):
 
     name = 'hupu'
     MAX_COUNT = 100000
