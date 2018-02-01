@@ -11,9 +11,14 @@ FILT = ['虎扑用户','的兴趣','更多']
 class HupudataSpider(scrapy.Spider):
 
     name = 'hupu'
-    MAX_COUNT = 100000
+    MAX_COUNT = 200000
     count = 0
     # def __init__(self):
+    try:
+        pickle_in = open('set.pkl','rb')
+        seen = pickle.load(pickle_in)
+    except Exception:
+        seen = set()
 
     def start_requests(self):
         urls = [
@@ -24,13 +29,14 @@ class HupudataSpider(scrapy.Spider):
 
     def parse(self, response):
 
+
         if (self.count >= self.MAX_COUNT):
             return
 
         item = HupudataItem()
         # try:
         item['user'] = response.url.split('/')[-1]
-        item['name'] = response.xpath('//div[@class="left"]/text()')[0].extract()
+        # item['name'] = response.xpath('//div[@class="left"]/text()')[0].extract()
 
         teams_link = response.xpath('//span[@itemprop="affiliation"]/a/@href').extract()
         if len(teams_link) == 0:
@@ -56,7 +62,10 @@ class HupudataSpider(scrapy.Spider):
 
         # print (follow_link)
         for url in follow_link:
-            yield scrapy.Request(url, callback=self.parse)
+            next_user = url.split('/')[-1]
+            if next_user not in self.seen:
+                self.seen.add(next_user)
+                yield scrapy.Request(url, callback=self.parse)
 
         # except Exception:
         #     pass

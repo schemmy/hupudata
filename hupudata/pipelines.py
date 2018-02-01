@@ -24,16 +24,21 @@ class HupudataPipeline(object):
         self.file.write(newline)
         return item
 
-    def spider_closed(self, spider):
+    def close_spider(self, spider):
         self.file.close()
-
-
 
 
 class DuplicatesPipeline(object):
 
     def __init__(self):
-        self.ids_seen = set()
+        try:
+            pickle_in = open('set.pkl','rb')
+            self.ids_seen = pickle.load(pickle_in)
+        except Exception:
+            self.ids_seen = set()
+
+    def open_spider(self, spider):
+        pass
 
     def process_item(self, item, spider):
         if item['user'] in self.ids_seen:
@@ -42,8 +47,7 @@ class DuplicatesPipeline(object):
             self.ids_seen.add(item['user'])
             return item
 
-
-    def spider_closed(self, spider):
-        with open('set.pickle', 'wb') as handle:
+    def close_spider(self, spider):
+        with open('set.pkl', 'wb') as handle:
             pickle.dump(self.ids_seen, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
