@@ -7,8 +7,14 @@
 
 import scrapy
 
-
 class HupudataItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    user = scrapy.Field()
+    name = scrapy.Field()
+    fav_teams = scrapy.Field()
+    level = scrapy.Field()
+    active = scrapy.Field()
+    since = scrapy.Field()
+
+    
+    

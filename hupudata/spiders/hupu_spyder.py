@@ -2,54 +2,86 @@ import scrapy
 import re
 from bs4 import BeautifulSoup
 
+from hupudata.items import HupudataItem
 
-FILT = ['的兴趣','更多']
+
+FILT = ['虎扑用户','的兴趣','更多']
 
 
 class QuotesSpider(scrapy.Spider):
-    name = "users"
 
-    def __init__(self):
-        self.visited = []
-        self.nv = 0
-        file = open('teams.txt', 'wb')
+    name = 'hupu'
+    MAX_COUNT = 100000
+    count = 0
+    # def __init__(self):
 
     def start_requests(self):
         urls = [
-            'https://my.hupu.com/SmithKobe',
+            'https://my.hupu.com/176192780288726',
         ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
 
-        try:
-            username = response.url.split("/")[-1]
+        if (self.count >= self.MAX_COUNT):
+            return
 
-            if username not in self.visited:
-                self.visited.append(username)
-                self.nv += 1
-                interest = response.css('div.brief')[0].extract()
-                words = re.findall('[\u4e00-\u9fff]+', interest)
-                teams = [i for i in words if not any(j in i for j in FILT)]
-                print (self.nv, teams)
-                file.write(','.join(teams))
-                file.write('\n')
+        item = HupudataItem()
+        # try:
+        item['user'] = response.url.split('/')[-1]
+        item['name'] = response.xpath('//div[@class="left"]/text()')[0].extract()
 
-                follow = response.css('div#following.indexfriend')[0]
-                follow = follow.css('a::attr(href)').extract()
-                follow_link = [i for i in follow if i.startswith('http')]
+        teams = response.xpath('//span[@itemprop="affiliation"]/a/text()').extract()
+        if len(teams) == 0:
+            return 
+        item['fav_teams'] = '.'.join(teams)
 
-                # print (follow_link)
-                for url in follow_link:
-                    yield scrapy.Request(url, callback=self.parse)
-        except Exception:
-            pass
+        personal = response.xpath('//div[@class="personalinfo"]').extract()[0].split()
+        idx = [i for i, s in enumerate(personal) if '社区等级' in s]
+        value = personal[idx[0]].split('</span>')[1]
+        item['level'] = re.sub('[^0-9]', '', value)
+        idx = [i for i, s in enumerate(personal) if '在线' in s]
+        value = personal[idx[0]].split('</span>')[1]
+        item['active'] = re.sub('[^0-9]', '', value)
+        idx = [i for i, s in enumerate(personal) if '加入' in s]
+        value = personal[idx[0]].split('</span>')[1]
+        item['since'] = value
+        self.count += 1
+        yield item
+
+        follow = response.css('div#following.indexfriend')[0].css('a::attr(href)').extract()
+        follow_link = [i for i in follow if i.startswith('http')]
+
+        # print (follow_link)
+        for url in follow_link:
+            yield scrapy.Request(url, callback=self.parse)
+
+        # except Exception:
+        #     pass
 
 
-        # z = wrap.css('div.contain')
-        # print (response.url.split("/"))
-        # filename = '%s.html' % username
-        # with open(filename, 'wb') as f:
-        #     f.write(response.body)
-        # self.log('Saved file %s' % filename)
+
+    # def parse(self, response):
+
+    #     item = HupudataItem()
+    #     try:
+    #         item['user'] = response.url.split('/')[-1]
+
+    #         interest = response.css('div.brief')[0].extract()
+    #         words = re.findall('[\u4e00-\u9fff]+', interest)
+    #         teams = [i for i in words if not any(j in i for j in FILT)]
+    #         item['fav_teams'] = '_'.join(teams)
+    #         self.count += 1
+    #         yield item
+
+    #         follow = response.css('div#following.indexfriend')[0].css('a::attr(href)').extract()
+    #         follow_link = [i for i in follow if i.startswith('http')]
+
+    #         # print (follow_link)
+    #         # if (self.count < self.COUNT_MAX):
+    #         for url in follow_link:
+    #             yield scrapy.Request(url, callback=self.parse)
+
+    #     except Exception:
+    #         pass
