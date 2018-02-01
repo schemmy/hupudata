@@ -13,16 +13,15 @@ class HupudataPipeline(object):
 
     def __init__(self):
         self.file = open('hupu.csv','w') 
+        self.file.write('user, fav_teams, level, active, since\n')
 
     def process_item(self, item, spider):
 
-        self.file.write(item['user'] + ',' +
-                        item['name'] + ',' +
-                        item['fav_teams'] + ',' +
-                        item['level'] + ',' +
-                        item['active'] + ',' +
-                        item['since'] + '\n'
-                        )
+        line = [item['user'], 
+                #item['name'], 
+                item['fav_teams'], item['level'], item['active'],item['since']]
+        newline = ','.join(line) + '\n'
+        self.file.write(newline)
         return item
 
     def spider_closed(self, spider):

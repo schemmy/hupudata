@@ -32,10 +32,11 @@ class HupudataSpider(scrapy.Spider):
         item['user'] = response.url.split('/')[-1]
         item['name'] = response.xpath('//div[@class="left"]/text()')[0].extract()
 
-        teams = response.xpath('//span[@itemprop="affiliation"]/a/text()').extract()
-        if len(teams) == 0:
+        teams_link = response.xpath('//span[@itemprop="affiliation"]/a/@href').extract()
+        if len(teams_link) == 0:
             return 
-        item['fav_teams'] = '.'.join(teams)
+        teams = [i.split('/')[-1] for i in teams_link]
+        item['fav_teams'] = '_'.join(teams)
 
         personal = response.xpath('//div[@class="personalinfo"]').extract()[0].split()
         idx = [i for i, s in enumerate(personal) if '社区等级' in s]
