@@ -13,7 +13,7 @@ import pickle
 class HupuZhuanquPipeline(object):
 
     def open_spider(self, spider):
-        filename = 'data/' + spider.dom + '.csv'
+        filename = 'data/nba/' + spider.dom + '.csv'
         self.f = codecs.open(filename, 'w', 'utf_8_sig') 
         self.writer = csv.writer(self.f) 
 
