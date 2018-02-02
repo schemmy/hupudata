@@ -14,7 +14,7 @@ class HupuZhuanquPipeline(object):
 
     def open_spider(self, spider):
         filename = 'data/nba/' + spider.dom + '.csv'
-        self.f = codecs.open(filename, 'w', 'utf_8_sig') 
+        self.f = codecs.open(filename, 'a', 'utf_8_sig') 
         self.writer = csv.writer(self.f) 
 
     def process_item(self, item, spider):

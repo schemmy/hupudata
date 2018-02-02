@@ -22,7 +22,7 @@ class HupuZhuanquSpider(scrapy.Spider):
     def start_requests(self):
         url = 'https://bbs.hupu.com/' + self.dom
         for i in range(self.max_page, self.min_page,-1):
-            link = url + '-' + str(i+1)
+            link = url + '-' + str(i)
             yield scrapy.Request(url=link, callback=self.parse)
 
     def parse(self, response):
