@@ -1,0 +1,17 @@
+scrapy crawl zhuanqu -a dom=liverpool
+scrapy crawl zhuanqu -a dom=chelsea
+scrapy crawl zhuanqu -a dom=mancity
+scrapy crawl zhuanqu -a dom=hotspur
+scrapy crawl zhuanqu -a dom=AstonVilla
+scrapy crawl zhuanqu -a dom=realmadrid
+scrapy crawl zhuanqu -a dom=barcelona
+scrapy crawl zhuanqu -a dom=atleticodemadrid
+scrapy crawl zhuanqu -a dom=vcf
+scrapy crawl zhuanqu -a dom=inter
+scrapy crawl zhuanqu -a dom=acmilan
+scrapy crawl zhuanqu -a dom=juventus
+scrapy crawl zhuanqu -a dom=asroma
+scrapy crawl zhuanqu -a dom=bayern
+scrapy crawl zhuanqu -a dom=bayer04
+scrapy crawl zhuanqu -a dom=PSG
+scrapy crawl zhuanqu -a dom=bvb

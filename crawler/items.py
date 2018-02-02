@@ -17,4 +17,10 @@ class HupudataItem(scrapy.Item):
     since = scrapy.Field()
 
     
-    
+
+class HupuZhuanquItem(scrapy.Item):
+    # define the fields for your item here like:
+    userId = scrapy.Field()
+    name = scrapy.Field()
+    poster = scrapy.Field()
+    url = scrapy.Field()

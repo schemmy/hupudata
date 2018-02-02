@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for hupudata project
+# Scrapy settings for crawl project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,10 +9,10 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'hupudata'
+BOT_NAME = 'crawler'
 
-SPIDER_MODULES = ['hupudata.spiders']
-NEWSPIDER_MODULE = 'hupudata.spiders'
+SPIDER_MODULES = ['crawler.spiders']
+NEWSPIDER_MODULE = 'crawler.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -65,8 +65,9 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'hupudata.pipelines.DuplicatesPipeline': 200,
-   'hupudata.pipelines.HupudataPipeline': 300
+   'crawler.pipelines.HupuZhuanquPipeline': 300,
+   # 'crawler.pipelines.DuplicatesPipeline': 200,
+   # 'crawler.pipelines.HupudataPipeline': 300
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

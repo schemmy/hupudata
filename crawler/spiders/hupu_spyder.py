@@ -2,10 +2,70 @@ import scrapy
 import re
 from bs4 import BeautifulSoup
 
-from hupudata.items import HupudataItem
+from crawler.items import HupudataItem,HupuZhuanquItem
 
 
 FILT = ['虎扑用户','的兴趣','更多']
+
+
+class HupuZhuanquSpider(scrapy.Spider):
+
+    name = 'zhuanqu'
+    MAX_COUNT = 200000
+    count = 0
+    domain = 'https://bbs.hupu.com'
+    min_page = 0
+    max_page = 10
+    def __init__(self, dom='', *args, **kwargs):
+        self.dom = dom
+
+    def start_requests(self):
+        url = 'https://bbs.hupu.com/' + self.dom
+        for i in range(self.max_page, self.min_page,-1):
+            link = url + '-' + str(i+1)
+            yield scrapy.Request(url=link, callback=self.parse)
+
+    def parse(self, response):
+
+        # if (self.count >= self.MAX_COUNT):
+            # return
+
+        if not response.url.split('/')[-1][0].isdigit():
+            posts = response.xpath('//a[@class="truetit"]').css('a::attr(href)').extract()
+            users_links = response.xpath('//a[@class="aulink"]/@href').extract()
+            ids = [i.split('/')[-1] for i in users_links]
+            names = response.xpath('//a[@class="aulink"]/text()').extract()
+            replies = response.xpath('//span[@class="ansour box"]/text()').extract()
+            
+            for i in range(len(posts)):
+                # fan = HupuZhuanquItem()
+                # fan['userId'] = ids[i]
+                # fan['name'] = names[i]
+                # fan['poster'] = '1'
+                # yield fan
+                self.count += int(replies[i].split()[0])
+                print (self.count)
+                n_pages = (int(replies[i].split()[0]) - 1) // 20 + 1
+                pts = posts[i].split('.')
+                for j in range(n_pages):
+                    url = self.domain + pts[0] + '-' + str(j+1) + '.' + pts[1]
+                    yield scrapy.Request(url=url, callback=self.parse)
+        else:
+            ids = response.xpath('//div[@class="j_u"]/@uid').extract()
+            names = response.xpath('//div[@class="j_u"]/@uname').extract()
+
+            for i in range(len(ids)):
+                fan = HupuZhuanquItem()
+                fan['userId'] = ids[i]
+                fan['name'] = names[i]
+                fan['url'] = response.url.split('/')[-1].split('.')[0]
+                if len(response.url.split('-')) == 1 and i == 0:
+                    fan['poster'] = 'Y'
+                else:
+                    fan['poster'] = 'N'
+                yield fan
+
+
 
 
 class HupudataSpider(scrapy.Spider):
@@ -15,7 +75,7 @@ class HupudataSpider(scrapy.Spider):
     count = 0
     # def __init__(self):
     try:
-        pickle_in = open('set.pkl','rb')
+        pickle_in = open('data/set2.pkl','rb')
         seen = pickle.load(pickle_in)
     except Exception:
         seen = set()
@@ -42,7 +102,7 @@ class HupudataSpider(scrapy.Spider):
         if len(teams_link) == 0:
             return 
         teams = [i.split('/')[-1] for i in teams_link]
-        item['fav_teams'] = '_'.join(teams)
+        item['fav_teams'] = '＋'.join(teams)
 
         personal = response.xpath('//div[@class="personalinfo"]').extract()[0].split()
         idx = [i for i, s in enumerate(personal) if '社区等级' in s]
