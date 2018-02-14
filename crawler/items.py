@@ -24,3 +24,4 @@ class HupuZhuanquItem(scrapy.Item):
     name = scrapy.Field()
     poster = scrapy.Field()
     url = scrapy.Field()
+    time = scrapy.Field()

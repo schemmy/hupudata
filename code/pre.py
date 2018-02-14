@@ -38,9 +38,3 @@ import codecs
 
 # print (o1.iloc[:,1].values)
 
-
-o = pd.read_csv('../data/arsenal.csv', sep=',',
-				names=['poster', 'ids', 'name', 'url'])
-
-print (len(o))
-print (len(set(o['name'])))
